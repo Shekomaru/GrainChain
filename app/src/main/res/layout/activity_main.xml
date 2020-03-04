@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context=".main.MainActivity"
     >
 
   <androidx.constraintlayout.widget.Guideline
@@ -23,7 +23,7 @@
       app:layout_constraintHeight_percent="0.5"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      tools:context=".RouteActivity"
+      tools:context=".route.RouteActivity"
       />
 
   <Button

@@ -1,26 +1,39 @@
-package com.grainchain.interview
+package com.grainchain.interview.main
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
-
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.grainchain.interview.R.id
+import com.grainchain.interview.R.layout
+import com.grainchain.interview.route.RouteActivity
+import kotlinx.android.synthetic.main.activity_main.main_button
 
-class RouteActivity : AppCompatActivity(), OnMapReadyCallback {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_route)
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        setContentView(layout.activity_main)
+
         val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment
+            .findFragmentById(id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        main_button.setOnClickListener {
+            this.startActivity(
+                Intent(
+                    this,
+                    RouteActivity::class.java
+                )
+            )
+        }
     }
 
     /**
@@ -40,4 +53,5 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
     }
+
 }
