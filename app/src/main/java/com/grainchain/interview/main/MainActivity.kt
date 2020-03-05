@@ -4,21 +4,33 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Looper
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.snackbar.Snackbar
 import com.grainchain.interview.R.id
 import com.grainchain.interview.R.layout
 import com.grainchain.interview.route.RouteActivity
+import kotlinx.android.synthetic.main.activity_main.button_show_snackbar
 import kotlinx.android.synthetic.main.activity_main.main_button
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
+
+    private lateinit var fuseLocationClient: FusedLocationProviderClient
+    private lateinit var locationCallback: LocationCallback
+    private lateinit var locationRequest: LocationRequest
 
     private lateinit var mMap: GoogleMap
     private val FINE_LOCATION_PERMISSION_CODE = 1234
@@ -26,6 +38,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(layout.activity_main)
+
+        fuseLocationClient = FusedLocationProviderClient(this)
 
         val mapFragment = supportFragmentManager
             .findFragmentById(id.map) as SupportMapFragment
@@ -48,6 +62,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             mMap.isMyLocationEnabled = true
+
+            startTrackingLocation()
         } else {
             ActivityCompat.requestPermissions(
                 this,
@@ -68,11 +84,47 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 grantResults[0] == PackageManager.PERMISSION_GRANTED
             ) {
                 mMap.isMyLocationEnabled = true
+                startTrackingLocation()
             } else {
                 //Location permission was denied
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    private fun startTrackingLocation() {
+        locationRequest = LocationRequest.create()
+        //Todo: tweak this values
+        locationRequest.interval = 500
+        locationRequest.fastestInterval = 300
+        locationRequest.smallestDisplacement = 1f
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(p0: LocationResult?) {
+                callback(p0)
+            }
+        }
+
+        fuseLocationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
+    }
+
+    fun callback(result: LocationResult?) {
+        result?.let {
+            Log.d("ManActivity", "${it.lastLocation.latitude} ${it.lastLocation.longitude}")
+            println(it.lastLocation.latitude)
+            println(it.lastLocation.longitude)
+
+            Snackbar.make(
+                findViewById(id.layout),
+                "${it.lastLocation.latitude} ${it.lastLocation.longitude}",
+                Snackbar.LENGTH_SHORT
+            ).show()
+        }
     }
 
     /**
