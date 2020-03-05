@@ -135,12 +135,13 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
         // Move the camera
         try {
             //If we only have one point, or if the start and end points are very close to each other, this will crash
-            mMap.moveCamera(
+            mMap.animateCamera(
                 CameraUpdateFactory.newLatLngBounds(
-                    LatLngBounds(
-                        startingPoint,
-                        endingPoint
-                    ), 10
+                    LatLngBounds.builder().apply {
+                        include(LatLng(start.first, start.second))
+                        include(LatLng(end.first, end.second))
+                    }.build()
+                    , 10
                 )
             )
         } catch (_: Exception) {

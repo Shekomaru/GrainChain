@@ -210,6 +210,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
                 "We have ${result.locations.size} locations",
                 Snackbar.LENGTH_SHORT
             ).show()
+            mMap.animateCamera(
+                CameraUpdateFactory.newLatLng(
+                    LatLng(
+                        result.lastLocation.latitude,
+                        result.lastLocation.longitude
+                    )
+                )
+            )
         }
     }
 
