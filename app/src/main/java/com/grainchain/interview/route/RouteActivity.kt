@@ -66,17 +66,15 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
             distances
         )
 
-//        val time = DateUtils.formatElapsedTime((route.endTime.time - route.startTime.time) / 1000)
-        //todo: improve time shown
         val time2 = DateUtils.formatDateRange(
             this,
             route.startTime.time,
             route.endTime.time,
-            (DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_WEEKDAY)
+            (DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_WEEKDAY)
         )
 
         info_text.text = "Distance: ${distances[0] / 1000} km\n" +
-            "Time ellapsed: $time2"
+            "Start and end times: $time2"
     }
 
     /**
