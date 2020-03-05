@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
     private lateinit var locationRequest: LocationRequest
 
     private lateinit var mMap: GoogleMap
-    private lateinit var routeLine: Polyline
+    private var routeLine: Polyline? = null
     private lateinit var routesList: RecyclerView
     private var isTracking = false
 
@@ -149,7 +149,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
             locationRequest = LocationRequest.create()
             locationRequest.interval = 2000
             locationRequest.fastestInterval = 1000
-            locationRequest.smallestDisplacement = 5f
+            locationRequest.smallestDisplacement = 1f
             locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
             locationCallback = object : LocationCallback() {
@@ -176,7 +176,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
 
     private fun stopTrackingLocation() {
         fuseLocationClient.removeLocationUpdates(locationCallback)
-        routeLine.remove()
+        routeLine?.remove()
 
         track_button.text = "Start Tracking"
     }
@@ -220,14 +220,28 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
                 "We have ${result.locations.size} locations",
                 Snackbar.LENGTH_SHORT
             ).show()
-            mMap.animateCamera(
-                CameraUpdateFactory.newLatLng(
-                    LatLng(
-                        result.lastLocation.latitude,
-                        result.lastLocation.longitude
+
+            if (locations.size == 1) {
+                mMap.animateCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        LatLng(
+                            result.lastLocation.latitude,
+                            result.lastLocation.longitude
+                        ),
+                        15f
                     )
                 )
-            )
+            } else {
+                mMap.animateCamera(
+                    CameraUpdateFactory.newLatLng(
+                        LatLng(
+                            result.lastLocation.latitude,
+                            result.lastLocation.longitude
+                        )
+                    )
+                )
+
+            }
         }
 
         drawRouteLine()
@@ -243,6 +257,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
                 )
             })
             .width(25f)
+        if (routeLine?.isVisible == true) {
+            routeLine?.remove()
+        }
         routeLine = mMap.addPolyline(polylineOptions)
     }
 

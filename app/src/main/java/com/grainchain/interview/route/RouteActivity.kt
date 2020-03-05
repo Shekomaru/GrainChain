@@ -1,6 +1,7 @@
 package com.grainchain.interview.route
 
 import android.R
+import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.text.format.DateUtils
@@ -20,6 +21,7 @@ import com.grainchain.interview.R.layout
 import com.grainchain.interview.data.Route
 import kotlinx.android.synthetic.main.activity_route.delete_button
 import kotlinx.android.synthetic.main.activity_route.info_text
+import kotlinx.android.synthetic.main.activity_route.share_button
 
 class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
 
@@ -50,6 +52,32 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
         showRouteInfo()
 
         delete_button.setOnClickListener { presenter.deleteRoute(route) }
+        share_button.setOnClickListener { shareRoute() }
+    }
+
+    private fun shareRoute() {
+        val textToShare = "Route name: ${route.name}\n" +
+            "Route origin location: https://www.google.com/maps/search/?api=1&query=${route.points.first().first},${route.points.first().second}\n" +
+            "Route destination location: https://www.google.com/maps/search/?api=1&query=${route.points.last().first},${route.points.last().second}\n" +
+            "Route start time: ${DateUtils.formatDateTime(
+                this,
+                route.startTime.time,
+                DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_TIME
+            )}\n" +
+            "Route end time: ${DateUtils.formatDateTime(
+                this,
+                route.endTime.time,
+                DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_TIME
+            )}"
+
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, textToShare)
+            type = "text/plain"
+        }
+
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        startActivity(shareIntent)
     }
 
     private fun showRouteInfo() {
@@ -57,23 +85,16 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
 
         val points = route.points
 
-        var distances = floatArrayOf(0f)
-        Location.distanceBetween(
-            points.first().first,
-            points.first().second,
-            points.last().first,
-            points.last().second,
-            distances
-        )
+        val distance = getDistanceFromPoints()
 
         val time2 = DateUtils.formatDateRange(
             this,
             route.startTime.time,
             route.endTime.time,
-            (DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_WEEKDAY)
+            DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_TIME
         )
 
-        info_text.text = "Distance: ${distances[0] / 1000} km\n" +
+        info_text.text = "Distance: ${distance / 1000} km\n" +
             "Start and end times: $time2"
     }
 
@@ -145,6 +166,36 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
         } catch (_: Exception) {
             mMap.moveCamera(CameraUpdateFactory.newLatLng(startingPoint))
         }
+    }
+
+    /**
+     * Gets the total distance traveled
+     *
+     * This distance is given in meters
+     *
+     * @return the total distance traveled
+     */
+    private fun getDistanceFromPoints(): Float {
+        val points = route.points
+        val distances = floatArrayOf(0f)
+
+        val totalDistance = points.foldRightIndexed(0f, { index, pair, acc ->
+            if (index == 0) {
+                acc
+            } else {
+                Location.distanceBetween(
+                    pair.first,
+                    pair.second,
+                    points[index - 1].first,
+                    points[index - 1].second,
+                    distances
+                )
+                distances[0]
+            }
+        }
+        )
+
+        return totalDistance
     }
 }
 
