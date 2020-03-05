@@ -26,6 +26,8 @@ import com.grainchain.interview.R.layout
 import com.grainchain.interview.route.RouteActivity
 import kotlinx.android.synthetic.main.activity_main.main_button
 import kotlinx.android.synthetic.main.activity_main.track_button
+import java.util.Calendar
+import java.util.Date
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -35,7 +37,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private var isTracking = false
+
     private var locations: List<LocationResult> = listOf()
+    private lateinit var startTime: Date
+    private lateinit var endTime: Date
 
     private val FINE_LOCATION_PERMISSION_CODE = 1234
 
@@ -60,8 +65,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         track_button.setOnClickListener {
             if (!isTracking) {
+                startTime = Calendar.getInstance().time
                 startTrackingLocation()
             } else {
+                endTime = Calendar.getInstance().time
                 stopTrackingLocation()
                 assignNameAndSave()
             }
