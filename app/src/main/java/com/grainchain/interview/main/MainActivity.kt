@@ -149,7 +149,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
             locationRequest = LocationRequest.create()
             locationRequest.interval = 2000
             locationRequest.fastestInterval = 1000
-            locationRequest.smallestDisplacement = 1f
+            locationRequest.smallestDisplacement = 5f
             locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
             locationCallback = object : LocationCallback() {
