@@ -29,7 +29,7 @@ import kotlinx.android.synthetic.main.activity_main.track_button
 import java.util.Calendar
 import java.util.Date
 
-class MainActivity : AppCompatActivity(), OnMapReadyCallback {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView {
 
     private lateinit var fuseLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
@@ -41,6 +41,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private var locations: List<LocationResult> = listOf()
     private lateinit var startTime: Date
     private lateinit var endTime: Date
+
+    private lateinit var presenter: MainPresenter
 
     private val FINE_LOCATION_PERMISSION_CODE = 1234
 
@@ -74,6 +76,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
             isTracking = !isTracking
         }
+
+        presenter = MainPresenterImpl(this)
     }
 
     private fun askForLocationPermissions() {
@@ -156,7 +160,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             .setMessage("Assign a name to this route:")
             .setView(editText)
             .setPositiveButton("Save") { dialog, id ->
-                //todo: save this stuff
+                presenter.saveRoute(
+                    editText.text.toString(),
+                    locations,
+                    startTime,
+                    endTime
+                )
             }
             .setNegativeButton("Delete rute") { dialog, id ->
                 //todo: just close, and bye bye
@@ -199,4 +208,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         stopTrackingLocation()
         super.onDestroy()
     }
+}
+
+interface MainView {
+
 }
