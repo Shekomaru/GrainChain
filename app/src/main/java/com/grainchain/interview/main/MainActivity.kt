@@ -87,6 +87,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
         presenter = MainPresenterImpl(this)
     }
 
+    override fun onResume() {
+        super.onResume()
+        presenter.onOnResume()
+    }
+
     private fun initRecyclerView() {
         routesList = findViewById<RecyclerView>(R.id.routes_list).apply {
             layoutManager = LinearLayoutManager(this@MainActivity)

@@ -3,7 +3,7 @@ package com.grainchain.interview.helpers
 import com.grainchain.interview.data.Route
 
 class RoutesManager(val listener: RoutesManagerListener? = null) {
-    companion object {
+    private companion object {
         var routes: MutableList<Route> = mutableListOf()
     }
 
@@ -17,6 +17,10 @@ class RoutesManager(val listener: RoutesManagerListener? = null) {
             routes.remove(it)
         }
         listener?.onRoutesChanged(routes)
+    }
+
+    fun getRoutes(): MutableList<Route> {
+        return routes
     }
 }
 

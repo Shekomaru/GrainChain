@@ -18,8 +18,8 @@ import com.google.android.gms.maps.model.PolylineOptions
 import com.grainchain.interview.R.id
 import com.grainchain.interview.R.layout
 import com.grainchain.interview.data.Route
+import kotlinx.android.synthetic.main.activity_route.delete_button
 import kotlinx.android.synthetic.main.activity_route.info_text
-
 
 class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
 
@@ -42,12 +42,14 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
         route = intent.extras?.getParcelable("route") ?: Route()
 
         // add back arrow to toolbar
-        if (supportActionBar != null) {
-            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-            supportActionBar!!.setDisplayShowHomeEnabled(true)
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowHomeEnabled(true)
         }
 
         showRouteInfo()
+
+        delete_button.setOnClickListener { presenter.deleteRoute(route) }
     }
 
     private fun showRouteInfo() {

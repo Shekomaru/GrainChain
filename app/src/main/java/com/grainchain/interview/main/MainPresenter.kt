@@ -29,6 +29,10 @@ class MainPresenterImpl(private val view: MainView) : MainPresenter, RoutesManag
         routesManager.addRoute(route)
     }
 
+    override fun onOnResume() {
+        view.updateRoutesList(routesManager.getRoutes())
+    }
+
     override fun onRoutesChanged(routes: List<Route>) {
         view.updateRoutesList(routes)
     }
@@ -37,4 +41,5 @@ class MainPresenterImpl(private val view: MainView) : MainPresenter, RoutesManag
 
 interface MainPresenter {
     fun saveRoute(name: String, points: List<LocationResult>, startTime: Date, endTime: Date)
+    fun onOnResume()
 }
