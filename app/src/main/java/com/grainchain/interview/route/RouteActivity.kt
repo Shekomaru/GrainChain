@@ -89,7 +89,7 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        showPoints(route.points)
+        drawRouteLine(route.points)
         showCriticalMarkers(route.points.first(), route.points.last())
     }
 
@@ -104,7 +104,7 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
         finish()
     }
 
-    private fun showPoints(points: List<Pair<Double, Double>>) {
+    private fun drawRouteLine(points: List<Pair<Double, Double>>) {
         val polylineOptions = PolylineOptions()
 
         polylineOptions.addAll(points.map { LatLng(it.first, it.second) })

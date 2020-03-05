@@ -22,6 +22,8 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.snackbar.Snackbar
 import com.grainchain.interview.R
 import com.grainchain.interview.R.id
@@ -40,6 +42,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
     private lateinit var locationRequest: LocationRequest
 
     private lateinit var mMap: GoogleMap
+    private lateinit var routeLine: Polyline
     private lateinit var routesList: RecyclerView
     private var isTracking = false
 
@@ -144,9 +147,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             locationRequest = LocationRequest.create()
-            locationRequest.interval = 3000
+            locationRequest.interval = 2000
             locationRequest.fastestInterval = 1000
-            locationRequest.smallestDisplacement = 0f
+            locationRequest.smallestDisplacement = 5f
             locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
             locationCallback = object : LocationCallback() {
@@ -162,11 +165,18 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
             )
 
             track_button.text = "Stop tracking"
+        } else {
+            Snackbar.make(
+                findViewById(R.id.layout),
+                "We don't have the permissions to do that",
+                Snackbar.LENGTH_SHORT
+            ).show()
         }
     }
 
     private fun stopTrackingLocation() {
         fuseLocationClient.removeLocationUpdates(locationCallback)
+        routeLine.remove()
 
         track_button.text = "Start Tracking"
     }
@@ -219,6 +229,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
                 )
             )
         }
+
+        drawRouteLine()
+    }
+
+    private fun drawRouteLine() {
+        val polylineOptions = PolylineOptions()
+
+        polylineOptions.addAll(locations.map {
+                LatLng(
+                    it.lastLocation.latitude,
+                    it.lastLocation.longitude
+                )
+            })
+            .width(25f)
+        routeLine = mMap.addPolyline(polylineOptions)
     }
 
     /**
