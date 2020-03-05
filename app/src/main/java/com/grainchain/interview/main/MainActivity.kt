@@ -23,7 +23,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.grainchain.interview.R.id
 import com.grainchain.interview.R.layout
 import com.grainchain.interview.route.RouteActivity
-import kotlinx.android.synthetic.main.activity_main.button_show_snackbar
 import kotlinx.android.synthetic.main.activity_main.main_button
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
