@@ -5,7 +5,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Looper
-import android.util.Log
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -24,6 +25,7 @@ import com.grainchain.interview.R.id
 import com.grainchain.interview.R.layout
 import com.grainchain.interview.route.RouteActivity
 import kotlinx.android.synthetic.main.activity_main.main_button
+import kotlinx.android.synthetic.main.activity_main.track_button
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -32,6 +34,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var locationRequest: LocationRequest
 
     private lateinit var mMap: GoogleMap
+    private var isTracking = false
+    private var locations: List<LocationResult> = listOf()
+
     private val FINE_LOCATION_PERMISSION_CODE = 1234
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +57,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 )
             )
         }
+
+        track_button.setOnClickListener {
+            if (!isTracking) {
+                startTrackingLocation()
+            } else {
+                stopTrackingLocation()
+                assignNameAndSave()
+            }
+            isTracking = !isTracking
+        }
     }
 
     private fun askForLocationPermissions() {
@@ -62,7 +77,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         ) {
             mMap.isMyLocationEnabled = true
 
-            startTrackingLocation()
+//            startTrackingLocation()
         } else {
             ActivityCompat.requestPermissions(
                 this,
@@ -83,7 +98,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 grantResults[0] == PackageManager.PERMISSION_GRANTED
             ) {
                 mMap.isMyLocationEnabled = true
-                startTrackingLocation()
+//                startTrackingLocation()
             } else {
                 //Location permission was denied
             }
@@ -92,32 +107,59 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun startTrackingLocation() {
-        locationRequest = LocationRequest.create()
-        //Todo: tweak this values
-        locationRequest.interval = 500
-        locationRequest.fastestInterval = 300
-        locationRequest.smallestDisplacement = 1f
-        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        locations = listOf()
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            locationRequest = LocationRequest.create()
+            locationRequest.interval = 3000
+            locationRequest.fastestInterval = 1000
+            locationRequest.smallestDisplacement = 5f
+            locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(p0: LocationResult?) {
-                callback(p0)
+            locationCallback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult?) {
+                    onLocationReceived(locationResult)
+                }
             }
-        }
 
-        fuseLocationClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper()
-        )
+            fuseLocationClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                Looper.getMainLooper()
+            )
+
+            track_button.text = "Stop tracking"
+        }
     }
 
-    fun callback(result: LocationResult?) {
-        result?.let {
-            Log.d("ManActivity", "${it.lastLocation.latitude} ${it.lastLocation.longitude}")
-            println(it.lastLocation.latitude)
-            println(it.lastLocation.longitude)
+    private fun stopTrackingLocation() {
+        fuseLocationClient.removeLocationUpdates(locationCallback)
 
+        track_button.text = "Start Tracking"
+    }
+
+    private fun assignNameAndSave() {
+        val editText = EditText(this)
+
+        AlertDialog.Builder(this)
+            .setTitle("Save Route")
+            .setMessage("Assign a name to this route:")
+            .setView(editText)
+            .setPositiveButton("Save") { dialog, id ->
+                //todo: save this stuff
+            }
+            .setNegativeButton("Delete rute") { dialog, id ->
+                //todo: just close, and bye bye
+            }
+            .show()
+    }
+
+    fun onLocationReceived(result: LocationResult?) {
+        result?.let {
+            locations = locations + it
             Snackbar.make(
                 findViewById(id.layout),
                 "${it.lastLocation.latitude} ${it.lastLocation.longitude}",
@@ -146,4 +188,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
     }
 
+    override fun onDestroy() {
+        stopTrackingLocation()
+        super.onDestroy()
+    }
 }
