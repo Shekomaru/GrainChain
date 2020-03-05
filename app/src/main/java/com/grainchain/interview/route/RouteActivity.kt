@@ -1,20 +1,20 @@
 package com.grainchain.interview.route
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-
-import com.google.android.gms.maps.CameraUpdateFactory
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import com.grainchain.interview.R.id
 import com.grainchain.interview.R.layout
+import com.grainchain.interview.data.Route
 
 class RouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
+    private lateinit var route: Route
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +23,8 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        route = intent.extras?.getParcelable("route") ?: Route()
     }
 
     /**
@@ -38,8 +40,20 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap = googleMap
 
         // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
+        /*val sydney = LatLng(-34.0, 151.0)
         mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))*/
+
+        showPoints(route.points)
+    }
+
+    private fun showPoints(points: List<Pair<Double, Double>>) {
+        val polylineOptions = PolylineOptions()
+
+        polylineOptions.addAll(points.map { LatLng(it.first, it.second) })
+            .width(25f)
+        mMap.addPolyline(polylineOptions)
+
+
     }
 }

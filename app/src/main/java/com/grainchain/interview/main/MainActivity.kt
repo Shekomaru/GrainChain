@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.snackbar.Snackbar
 import com.grainchain.interview.R.id
 import com.grainchain.interview.R.layout
+import com.grainchain.interview.data.Route
 import com.grainchain.interview.route.RouteActivity
 import kotlinx.android.synthetic.main.activity_main.main_button
 import kotlinx.android.synthetic.main.activity_main.track_button
@@ -127,7 +128,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView {
             locationRequest = LocationRequest.create()
             locationRequest.interval = 3000
             locationRequest.fastestInterval = 1000
-            locationRequest.smallestDisplacement = 5f
+            locationRequest.smallestDisplacement = 0f
             locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
             locationCallback = object : LocationCallback() {
@@ -178,7 +179,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView {
             locations = locations + it
             Snackbar.make(
                 findViewById(id.layout),
-                "${it.lastLocation.latitude} ${it.lastLocation.longitude}",
+//                "${it.lastLocation.latitude} ${it.lastLocation.longitude}",
+                "We have ${result.locations.size} locations",
                 Snackbar.LENGTH_SHORT
             ).show()
         }
@@ -204,6 +206,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView {
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
     }
 
+    override fun showRoute(route: Route) {
+        startActivity(
+            Intent(
+                this,
+                RouteActivity::class.java
+            ).apply {
+                val extras = Bundle()
+                extras.putParcelable("route", route)
+                putExtras(extras)
+            }
+        )
+    }
+
     override fun onDestroy() {
         stopTrackingLocation()
         super.onDestroy()
@@ -211,5 +226,5 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView {
 }
 
 interface MainView {
-
+    fun showRoute(route: Route)
 }

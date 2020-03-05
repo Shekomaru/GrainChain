@@ -4,8 +4,7 @@ import com.google.android.gms.location.LocationResult
 import com.grainchain.interview.data.Route
 import java.util.Date
 
-class MainPresenterImpl(view: MainView) : MainPresenter {
-
+class MainPresenterImpl(val view: MainView) : MainPresenter {
     var routes: List<Route> = listOf()
 
     override fun saveRoute(
@@ -15,10 +14,19 @@ class MainPresenterImpl(view: MainView) : MainPresenter {
         endTime: Date
     ) {
         val route = Route(
-            name, points, startTime, endTime
+            name,
+            points.map {
+                it.lastLocation.run {
+                    Pair(latitude, longitude)
+                }
+            },
+            startTime,
+            endTime
         )
 
         routes = routes + route
+
+        view.showRoute(route)
     }
 
 }

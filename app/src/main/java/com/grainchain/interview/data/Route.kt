@@ -1,11 +1,13 @@
 package com.grainchain.interview.data
 
-import com.google.android.gms.location.LocationResult
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 import java.util.Date
 
+@Parcelize
 data class Route(
-    val name: String,
-    val points: List<LocationResult>,
-    val startTime: Date,
-    val endTime: Date
-)
+    val name: String = "Not found",
+    val points: List<Pair<Double, Double>> = listOf(),
+    val startTime: Date = Date(),
+    val endTime: Date = Date()
+) : Parcelable
