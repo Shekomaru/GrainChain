@@ -21,13 +21,18 @@ import com.grainchain.interview.data.Route
 import kotlinx.android.synthetic.main.activity_route.info_text
 
 
-class RouteActivity : AppCompatActivity(), OnMapReadyCallback {
+class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
+
+    private lateinit var presenter: RoutePresenter
 
     private lateinit var mMap: GoogleMap
     private lateinit var route: Route
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        presenter = RoutePresenterImpl(this)
+
         setContentView(layout.activity_route)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -68,7 +73,7 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback {
             (DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_WEEKDAY)
         )
 
-        info_text.text = "Distance: ${distances[0]} km\n" +
+        info_text.text = "Distance: ${distances[0] / 1000} km\n" +
             "Time ellapsed: $time2"
     }
 
@@ -93,6 +98,10 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback {
             finish()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onRouteDeleted() {
+        finish()
     }
 
     private fun showPoints(points: List<Pair<Double, Double>>) {
@@ -136,4 +145,8 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback {
             mMap.moveCamera(CameraUpdateFactory.newLatLng(startingPoint))
         }
     }
+}
+
+interface RouteView {
+    fun onRouteDeleted()
 }

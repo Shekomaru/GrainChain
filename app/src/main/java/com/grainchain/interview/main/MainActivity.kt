@@ -154,6 +154,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView {
     }
 
     private fun assignNameAndSave() {
+        if (locations.size < 2) {
+            Snackbar.make(
+                findViewById(id.layout),
+                "We need at least 2 points in order to save the route",
+                Snackbar.LENGTH_SHORT
+            ).show()
+
+            return
+        }
         val editText = EditText(this)
 
         AlertDialog.Builder(this)

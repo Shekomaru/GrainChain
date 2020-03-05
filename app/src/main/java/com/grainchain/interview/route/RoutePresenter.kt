@@ -1,9 +1,18 @@
 package com.grainchain.interview.route
 
-interface RoutePresenter {
+import com.grainchain.interview.data.Route
+import com.grainchain.interview.helpers.RoutesManager
 
+class RoutePresenterImpl(val view: RouteView) : RoutePresenter {
+    private val routesManager = RoutesManager()
+
+    override fun deleteRoute(route: Route) {
+        routesManager.deleteRoute(route)
+
+        view.onRouteDeleted()
+    }
 }
 
-class RoutePresenterImpl : RoutePresenter {
-
+interface RoutePresenter {
+    fun deleteRoute(route: Route)
 }
