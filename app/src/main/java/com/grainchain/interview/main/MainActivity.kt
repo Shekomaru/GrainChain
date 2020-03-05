@@ -10,6 +10,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -21,6 +23,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.snackbar.Snackbar
+import com.grainchain.interview.R
 import com.grainchain.interview.R.id
 import com.grainchain.interview.R.layout
 import com.grainchain.interview.data.Route
@@ -30,13 +33,14 @@ import kotlinx.android.synthetic.main.activity_main.track_button
 import java.util.Calendar
 import java.util.Date
 
-class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteClickListener {
 
     private lateinit var fuseLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
 
     private lateinit var mMap: GoogleMap
+    private lateinit var routesList: RecyclerView
     private var isTracking = false
 
     private var locations: List<LocationResult> = listOf()
@@ -78,7 +82,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView {
             isTracking = !isTracking
         }
 
+        initRecyclerView()
+
         presenter = MainPresenterImpl(this)
+    }
+
+    private fun initRecyclerView() {
+        routesList = findViewById<RecyclerView>(R.id.routes_list).apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = RoutesAdapter(listener = this@MainActivity)
+        }
     }
 
     private fun askForLocationPermissions() {
@@ -228,6 +241,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView {
         )
     }
 
+    override fun updateRoutesList(routes: List<Route>) {
+        (routesList.adapter as RoutesAdapter).updateRoutes(routes)
+    }
+
+    override fun onRouteClicked(route: Route) {
+        showRoute(route)
+    }
+
     override fun onDestroy() {
         stopTrackingLocation()
         super.onDestroy()
@@ -236,4 +257,5 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView {
 
 interface MainView {
     fun showRoute(route: Route)
+    fun updateRoutesList(routes: List<Route>)
 }

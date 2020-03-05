@@ -6,7 +6,7 @@ import com.grainchain.interview.helpers.RoutesManager
 import com.grainchain.interview.helpers.RoutesManagerListener
 import java.util.Date
 
-class MainPresenterImpl(val view: MainView) : MainPresenter, RoutesManagerListener {
+class MainPresenterImpl(private val view: MainView) : MainPresenter, RoutesManagerListener {
     private val routesManager = RoutesManager(this)
 
     override fun saveRoute(
@@ -27,12 +27,10 @@ class MainPresenterImpl(val view: MainView) : MainPresenter, RoutesManagerListen
         )
 
         routesManager.addRoute(route)
-
-        view.showRoute(route)
     }
 
     override fun onRoutesChanged(routes: List<Route>) {
-        //todo: notify the activity that the routes has changed, so we can show the correct list at the bottom of the screen
+        view.updateRoutesList(routes)
     }
 
 }

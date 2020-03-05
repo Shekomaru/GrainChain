@@ -36,6 +36,14 @@
       app:layout_constraintEnd_toEndOf="@id/map"
       />
 
+  <androidx.recyclerview.widget.RecyclerView
+      android:id="@+id/routes_list"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/map"
+      />
+
   <Button
       android:id="@+id/main_button"
       android:layout_width="wrap_content"
