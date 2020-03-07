@@ -1,6 +1,7 @@
 package com.grainchain.interview.room
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import com.grainchain.interview.data.Coord
 import com.grainchain.interview.data.Route
 import kotlinx.coroutines.CoroutineScope
@@ -21,7 +22,7 @@ class RoutesRepository(context: Context) : CoroutineScope {
         routesDao = db.RoutesDao()
     }
 
-    fun getAllRoutes() = routesDao.getAllRoutes()
+    fun getAllRoutes(): LiveData<List<Route>> = routesDao.getAllRoutes()
 
     fun getRoute(routeId: Int) = routesDao.getRoute(routeId)
 

@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -92,7 +93,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
 
     override fun onResume() {
         super.onResume()
-        presenter.onOnResume()
+        (presenter as MainPresenterImpl).routes.observe(this, Observer { routes ->
+            updateRoutesList(routes)
+        })
     }
 
     private fun initRecyclerView() {

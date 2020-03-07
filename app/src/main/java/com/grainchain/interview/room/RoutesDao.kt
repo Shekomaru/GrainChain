@@ -1,5 +1,6 @@
 package com.grainchain.interview.room
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -13,7 +14,7 @@ import com.grainchain.interview.data.RouteWithCoords
 interface RoutesDao {
     /*Routes methods*/
     @Query("SELECT * FROM routes_table")
-    fun getAllRoutes(): List<Route>
+    fun getAllRoutes(): LiveData<List<Route>>
 
     @Transaction
     @Query("SELECT * FROM routes_table WHERE id = :routeId LIMIT 1")
