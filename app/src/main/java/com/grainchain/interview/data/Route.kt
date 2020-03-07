@@ -2,9 +2,11 @@ package com.grainchain.interview.data
 
 import android.os.Parcelable
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import androidx.room.Relation
 import kotlinx.android.parcel.Parcelize
 import java.util.Date
 
@@ -24,4 +26,12 @@ data class Coord(
     @ColumnInfo(name = "route_id") val routeId: Int,
     val latitude: Double,
     val longitude: Double
+)
+
+data class RouteWithCoords(
+    @Embedded val route: Route,
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "route_id"
+    ) val coords: List<Coord>
 )
