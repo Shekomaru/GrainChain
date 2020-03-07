@@ -83,8 +83,6 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
     private fun showRouteInfo() {
         title = route.name
 
-        val points = route.points
-
         val distance = getDistanceFromPoints()
 
         val time2 = DateUtils.formatDateRange(

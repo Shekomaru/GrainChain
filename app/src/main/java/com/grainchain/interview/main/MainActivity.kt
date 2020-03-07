@@ -197,7 +197,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
             .setTitle("Save Route")
             .setMessage("Assign a name to this route:")
             .setView(editText)
-            .setPositiveButton("Save") { dialog, id ->
+            .setPositiveButton("Save") { _, _ ->
                 presenter.saveRoute(
                     editText.text.toString(),
                     locations,
@@ -205,7 +205,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
                     endTime
                 )
             }
-            .setNegativeButton("Delete rute") { dialog, id ->
+            .setNegativeButton("Delete rute") { _, _ ->
                 //todo: just close, and bye bye
             }
             .show()
