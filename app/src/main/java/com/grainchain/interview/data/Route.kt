@@ -15,18 +15,19 @@ import java.util.Date
 data class Route(
     @PrimaryKey(autoGenerate = true) var id: Int = 0,
     @ColumnInfo(name = "name") var name: String = "Not found",
-    @Ignore var points: List<Pair<Double, Double>> = listOf(),
+    @Ignore var points: List<Coord> = listOf(),
     @ColumnInfo(name = "start_time") var startTime: Date = Date(),
     @ColumnInfo(name = "end_time") var endTime: Date = Date()
 ) : Parcelable
 
 @Entity(tableName = "coords_table")
+@Parcelize
 data class Coord(
-    @PrimaryKey(autoGenerate = true) val coordId: Int,
-    @ColumnInfo(name = "route_id") val routeId: Int,
-    val latitude: Double,
-    val longitude: Double
-)
+    @PrimaryKey(autoGenerate = true) val coordId: Int = 0,
+    @ColumnInfo(name = "route_id") val routeId: Int = 0,
+    val latitude: Double = 0.0,
+    val longitude: Double = 0.0
+) : Parcelable
 
 data class RouteWithCoords(
     @Embedded val route: Route,

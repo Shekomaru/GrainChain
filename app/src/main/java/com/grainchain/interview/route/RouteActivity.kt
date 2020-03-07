@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.grainchain.interview.R.id
 import com.grainchain.interview.R.layout
+import com.grainchain.interview.data.Coord
 import com.grainchain.interview.data.Route
 import kotlinx.android.synthetic.main.activity_route.delete_button
 import kotlinx.android.synthetic.main.activity_route.info_text
@@ -57,8 +58,8 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
 
     private fun shareRoute() {
         val textToShare = "Route name: ${route.name}\n" +
-            "Route origin location: https://www.google.com/maps/search/?api=1&query=${route.points.first().first},${route.points.first().second}\n" +
-            "Route destination location: https://www.google.com/maps/search/?api=1&query=${route.points.last().first},${route.points.last().second}\n" +
+            "Route origin location: https://www.google.com/maps/search/?api=1&query=${route.points.first().latitude},${route.points.first().longitude}\n" +
+            "Route destination location: https://www.google.com/maps/search/?api=1&query=${route.points.last().latitude},${route.points.last().longitude}\n" +
             "Route start time: ${DateUtils.formatDateTime(
                 this,
                 route.startTime.time,
@@ -123,17 +124,17 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
         finish()
     }
 
-    private fun drawRouteLine(points: List<Pair<Double, Double>>) {
+    private fun drawRouteLine(points: List<Coord>) {
         val polylineOptions = PolylineOptions()
 
-        polylineOptions.addAll(points.map { LatLng(it.first, it.second) })
+        polylineOptions.addAll(points.map { LatLng(it.latitude, it.longitude) })
             .width(25f)
         mMap.addPolyline(polylineOptions)
     }
 
-    private fun showCriticalMarkers(start: Pair<Double, Double>, end: Pair<Double, Double>) {
+    private fun showCriticalMarkers(start: Coord, end: Coord) {
         // Add a marker in the starting point
-        val startingPoint = LatLng(start.first, start.second)
+        val startingPoint = LatLng(start.latitude, start.longitude)
         mMap.addMarker(
             MarkerOptions()
                 .position(startingPoint)
@@ -142,7 +143,7 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
         )
 
         // Add a marker in the ending point
-        val endingPoint = LatLng(end.first, end.second)
+        val endingPoint = LatLng(end.latitude, end.longitude)
         mMap.addMarker(
             MarkerOptions()
                 .position(endingPoint)
@@ -155,8 +156,8 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
             mMap.animateCamera(
                 CameraUpdateFactory.newLatLngBounds(
                     LatLngBounds.builder().apply {
-                        include(LatLng(start.first, start.second))
-                        include(LatLng(end.first, end.second))
+                        include(LatLng(start.latitude, start.longitude))
+                        include(LatLng(end.latitude, end.longitude))
                     }.build()
                     , 10
                 )
@@ -182,10 +183,10 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
                 acc
             } else {
                 Location.distanceBetween(
-                    pair.first,
-                    pair.second,
-                    points[index - 1].first,
-                    points[index - 1].second,
+                    pair.latitude,
+                    pair.longitude,
+                    points[index - 1].latitude,
+                    points[index - 1].longitude,
                     distances
                 )
                 distances[0]

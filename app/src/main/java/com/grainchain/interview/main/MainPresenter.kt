@@ -2,6 +2,7 @@ package com.grainchain.interview.main
 
 import android.content.Context
 import com.google.android.gms.location.LocationResult
+import com.grainchain.interview.data.Coord
 import com.grainchain.interview.data.Route
 import com.grainchain.interview.helpers.RoutesManager
 import com.grainchain.interview.helpers.RoutesManagerListener
@@ -24,7 +25,7 @@ class MainPresenterImpl(private val view: MainView, context: Context) :
             name,
             points.map {
                 it.lastLocation.run {
-                    Pair(latitude, longitude)
+                    Coord(latitude = latitude, longitude = longitude)
                 }
             },
             startTime,
