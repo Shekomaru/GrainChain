@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
 
         initRecyclerView()
 
-        presenter = MainPresenterImpl(this)
+        presenter = MainPresenterImpl(this, this)
     }
 
     override fun onResume() {
@@ -149,7 +149,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
             locationRequest = LocationRequest.create()
             locationRequest.interval = 2000
             locationRequest.fastestInterval = 1000
-            locationRequest.smallestDisplacement = 5f
+            locationRequest.smallestDisplacement = 0f //Todo: make this 5 before going to prod
             locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
             locationCallback = object : LocationCallback() {

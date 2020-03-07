@@ -2,6 +2,7 @@
 
 ext {
     roomVersion = '2.2.4'
+    coroutines = '1.3.2'
 }
 
 buildscript {
