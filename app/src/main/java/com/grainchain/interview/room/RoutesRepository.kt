@@ -42,7 +42,7 @@ class RoutesRepository(context: Context) : CoroutineScope {
 
     private suspend fun deleteRouteInBG(route: Route) {
         withContext(Dispatchers.IO) {
-            routesDao.deleteRoute(route)
+            routesDao.deleteCompleteRoute(route)
         }
     }
 

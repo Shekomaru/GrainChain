@@ -32,6 +32,12 @@ interface RoutesDao {
     @Delete
     suspend fun deleteRoute(route: Route)
 
+    @Transaction
+    suspend fun deleteCompleteRoute(route: Route) {
+        deleteRoute(route)
+        deletePointsFromRoute(route.id)
+    }
+
     /*Coords methods*/
     @Query("SELECT * FROM coords_table WHERE route_id = :routeId")
     fun getCoordsOfRoute(routeId: Int): List<Coord>
