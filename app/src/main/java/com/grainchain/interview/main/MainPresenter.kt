@@ -16,6 +16,7 @@ class MainPresenterImpl(private val view: MainView) : MainPresenter, RoutesManag
         endTime: Date
     ) {
         val route = Route(
+            0,
             name,
             points.map {
                 it.lastLocation.run {
