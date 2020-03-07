@@ -23,13 +23,15 @@ class RoutesRepository(context: Context) : CoroutineScope {
 
     fun getAllRoutes() = routesDao.getAllRoutes()
 
+    fun getRoute(routeId: Int) = routesDao.getRoute(routeId)
+
     fun addRoute(route: Route) {
         launch { addRouteInBG(route) }
     }
 
     private suspend fun addRouteInBG(route: Route) {
         withContext(Dispatchers.IO) {
-            routesDao.insertRoute(route)
+            routesDao.insertCompleteRoute(route)
         }
     }
 

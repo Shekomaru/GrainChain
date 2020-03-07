@@ -4,8 +4,10 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import com.grainchain.interview.data.Coord
 import com.grainchain.interview.data.Route
+import com.grainchain.interview.data.RouteWithCoords
 
 @Dao
 interface RoutesDao {
@@ -13,8 +15,18 @@ interface RoutesDao {
     @Query("SELECT * FROM routes_table")
     fun getAllRoutes(): List<Route>
 
+    @Transaction
+    @Query("SELECT * FROM routes_table WHERE id = :routeId LIMIT 1")
+    fun getRoute(routeId: Int): RouteWithCoords
+
     @Insert
     suspend fun insertRoute(route: Route)
+
+    @Transaction
+    suspend fun insertCompleteRoute(route: Route) {
+        insertRoute(route)
+        insertCoords(*route.points.toTypedArray())
+    }
 
     @Delete
     suspend fun deleteRoute(route: Route)
