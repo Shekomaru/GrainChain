@@ -38,6 +38,16 @@ class RoutesRepository(context: Context) : CoroutineScope {
         }
     }
 
+    fun deleteRouteById(routeId: Long){
+        launch { deleteRouteByIdInBG(routeId)}
+    }
+
+    private suspend fun deleteRouteByIdInBG(routeId: Long){
+        withContext(Dispatchers.IO){
+            routesDao.deleteCompleteRouteById(routeId)
+        }
+    }
+
     fun deleteRoute(route: Route) {
         launch { deleteRouteInBG(route) }
     }

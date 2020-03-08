@@ -1,6 +1,7 @@
 package com.grainchain.interview.route
 
 import android.R
+import android.app.Activity
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
@@ -57,7 +58,13 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
 
         showRouteInfo()
 
-        delete_button.setOnClickListener { presenter.deleteRoute(route) }
+        delete_button.setOnClickListener {
+            val routeId = route.id
+            val intent = Intent()
+            intent.putExtra("routeId", routeId)
+            setResult(2345, intent)
+            finish()
+        }
         share_button.setOnClickListener { shareRoute() }
     }
 

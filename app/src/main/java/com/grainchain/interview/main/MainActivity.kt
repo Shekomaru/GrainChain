@@ -32,7 +32,6 @@ import com.grainchain.interview.R.layout
 import com.grainchain.interview.data.Route
 import com.grainchain.interview.data.RouteWithCoords
 import com.grainchain.interview.route.RouteActivity
-import kotlinx.android.synthetic.main.activity_main.main_button
 import kotlinx.android.synthetic.main.activity_main.track_button
 import java.util.Calendar
 import java.util.Date
@@ -54,7 +53,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
 
     private lateinit var presenter: MainPresenter
 
-    private val FINE_LOCATION_PERMISSION_CODE = 1234
+    private val FINE_LOCATION_PERMISSION_CODE = 2345
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,15 +64,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
         val mapFragment = supportFragmentManager
             .findFragmentById(id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
-        main_button.setOnClickListener {
-            this.startActivity(
-                Intent(
-                    this,
-                    RouteActivity::class.java
-                )
-            )
-        }
 
         track_button.setOnClickListener {
             if (!isTracking) {
@@ -90,14 +80,20 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
         initRecyclerView()
 
         presenter = MainPresenterImpl(this, this)
+
+        (presenter as MainPresenterImpl).routes.observe(this, Observer { routes ->
+            updateRoutesList(routes)
+        })
     }
 
+/*
     override fun onResume() {
         super.onResume()
         (presenter as MainPresenterImpl).routes.observe(this, Observer { routes ->
             updateRoutesList(routes)
         })
     }
+*/
 
     private fun initRecyclerView() {
         routesList = findViewById<RecyclerView>(R.id.routes_list).apply {
@@ -288,7 +284,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
     }
 
     override fun showRoute(route: Route) {
-        startActivity(
+        startActivityForResult(
             Intent(
                 this,
                 RouteActivity::class.java
@@ -303,7 +299,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
                     )
                 )
                 putExtras(extras)
-            }
+            },
+            2
         )
     }
 
@@ -313,6 +310,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
 
     override fun onRouteClicked(route: Route) {
         showRoute(route)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 2) {
+            if (resultCode == 2345) {
+                val routeId: Long = data?.getLongExtra("routeId", 0) ?: 0
+                (presenter as MainPresenterImpl).routesRepository.deleteRouteById(routeId)
+            }
+        }
     }
 
     override fun onDestroy() {
