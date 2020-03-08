@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.grainchain.interview.data.Coord
@@ -26,7 +27,7 @@ interface RoutesDao {
     @Transaction
     suspend fun insertCompleteRoute(route: Route) {
         insertRoute(route)
-        insertCoords(*route.points.toTypedArray())
+        insertCoords(*route.points.onEach { it.routeId = route.id }.toTypedArray())
     }
 
     @Delete
@@ -40,11 +41,14 @@ interface RoutesDao {
 
     /*Coords methods*/
     @Query("SELECT * FROM coords_table WHERE route_id = :routeId")
-    fun getCoordsOfRoute(routeId: Int): List<Coord>
+    fun getCoordsOfRoute(routeId: Long): List<Coord>
 
-    @Insert
+    @Query("SELECT * FROM coords_table")
+    fun getCoords(): List<Coord>
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertCoords(vararg coords: Coord)
 
     @Query("DELETE FROM coords_table WHERE route_id = :routeId")
-    suspend fun deletePointsFromRoute(routeId: Int)
+    suspend fun deletePointsFromRoute(routeId: Long)
 }

@@ -13,7 +13,7 @@ import java.util.Date
 @Entity(tableName = "routes_table")
 @Parcelize
 data class Route(
-    @PrimaryKey(autoGenerate = true) var id: Int = 0,
+    @PrimaryKey var id: Long = 0,
     @ColumnInfo(name = "name") var name: String = "Not found",
     @Ignore var points: List<Coord> = listOf(),
     @ColumnInfo(name = "start_time") var startTime: Date = Date(),
@@ -24,15 +24,16 @@ data class Route(
 @Parcelize
 data class Coord(
     @PrimaryKey(autoGenerate = true) val coordId: Int = 0,
-    @ColumnInfo(name = "route_id") val routeId: Int = 0,
+    @ColumnInfo(name = "route_id") var routeId: Long = 0,
     val latitude: Double = 0.0,
     val longitude: Double = 0.0
 ) : Parcelable
 
+@Parcelize
 data class RouteWithCoords(
     @Embedded val route: Route,
     @Relation(
         parentColumn = "id",
         entityColumn = "route_id"
     ) val coords: List<Coord>
-)
+) : Parcelable

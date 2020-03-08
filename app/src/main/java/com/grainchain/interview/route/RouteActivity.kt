@@ -20,6 +20,7 @@ import com.grainchain.interview.R.id
 import com.grainchain.interview.R.layout
 import com.grainchain.interview.data.Coord
 import com.grainchain.interview.data.Route
+import com.grainchain.interview.data.RouteWithCoords
 import kotlinx.android.synthetic.main.activity_route.delete_button
 import kotlinx.android.synthetic.main.activity_route.info_text
 import kotlinx.android.synthetic.main.activity_route.share_button
@@ -30,6 +31,7 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
 
     private lateinit var mMap: GoogleMap
     private lateinit var route: Route
+    private lateinit var coords: List<Coord>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +44,10 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
             .findFragmentById(id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        route = intent.extras?.getParcelable("route") ?: Route()
+        val routeWithCoords =
+            intent.extras?.getParcelable("route") ?: RouteWithCoords(Route(), listOf())
+        route = routeWithCoords.route
+        coords = routeWithCoords.coords
 
         // add back arrow to toolbar
         supportActionBar?.apply {
@@ -58,8 +63,8 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
 
     private fun shareRoute() {
         val textToShare = "Route name: ${route.name}\n" +
-            "Route origin location: https://www.google.com/maps/search/?api=1&query=${route.points.first().latitude},${route.points.first().longitude}\n" +
-            "Route destination location: https://www.google.com/maps/search/?api=1&query=${route.points.last().latitude},${route.points.last().longitude}\n" +
+            "Route origin location: https://www.google.com/maps/search/?api=1&query=${route.points.first().latitude},${coords.first().longitude}\n" +
+            "Route destination location: https://www.google.com/maps/search/?api=1&query=${coords.last().latitude},${coords.last().longitude}\n" +
             "Route start time: ${DateUtils.formatDateTime(
                 this,
                 route.startTime.time,
@@ -109,8 +114,8 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        drawRouteLine(route.points)
-        showCriticalMarkers(route.points.first(), route.points.last())
+        drawRouteLine(coords)
+        showCriticalMarkers(coords.first(), coords.last())
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -175,7 +180,7 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
      * @return the total distance traveled
      */
     private fun getDistanceFromPoints(): Float {
-        val points = route.points
+        val points = coords
         val distances = floatArrayOf(0f)
 
         val totalDistance = points.foldRightIndexed(0f, { index, pair, acc ->

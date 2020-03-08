@@ -30,6 +30,7 @@ import com.grainchain.interview.R
 import com.grainchain.interview.R.id
 import com.grainchain.interview.R.layout
 import com.grainchain.interview.data.Route
+import com.grainchain.interview.data.RouteWithCoords
 import com.grainchain.interview.route.RouteActivity
 import kotlinx.android.synthetic.main.activity_main.main_button
 import kotlinx.android.synthetic.main.activity_main.track_button
@@ -293,7 +294,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
                 RouteActivity::class.java
             ).apply {
                 val extras = Bundle()
-                extras.putParcelable("route", route)
+                extras.putParcelable(
+                    "route",
+                    /*(presenter as MainPresenterImpl).getCompleteRoute(route.id)*/
+                    RouteWithCoords(
+                        route,
+                        (presenter as MainPresenterImpl).routesRepository.getCoordsOfRoute(route.id)
+                    )
+                )
                 putExtras(extras)
             }
         )

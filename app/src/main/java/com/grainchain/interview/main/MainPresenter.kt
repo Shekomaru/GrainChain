@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import com.google.android.gms.location.LocationResult
 import com.grainchain.interview.data.Coord
 import com.grainchain.interview.data.Route
+import com.grainchain.interview.data.RouteWithCoords
 import com.grainchain.interview.helpers.RoutesManagerListener
 import com.grainchain.interview.room.RoutesRepository
 import java.util.Date
@@ -22,11 +23,11 @@ class MainPresenterImpl(private val view: MainView, context: Context) :
         endTime: Date
     ) {
         val route = Route(
-            0,
+            startTime.time,
             name,
             points.map {
                 it.lastLocation.run {
-                    Coord(latitude = latitude, longitude = longitude)
+                    Coord(latitude = latitude, longitude = longitude, routeId = startTime.time)
                 }
             },
             startTime,
@@ -40,6 +41,10 @@ class MainPresenterImpl(private val view: MainView, context: Context) :
 
     override fun onRoutesChanged(routes: List<Route>) {
 //        view.updateRoutesList(routes)
+    }
+
+    fun getCompleteRoute(routeId: Int): RouteWithCoords {
+        return routesRepository.getRoute(routeId)
     }
 
 }

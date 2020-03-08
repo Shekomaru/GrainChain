@@ -26,6 +26,8 @@ class RoutesRepository(context: Context) : CoroutineScope {
 
     fun getRoute(routeId: Int) = routesDao.getRoute(routeId)
 
+    fun getCoords() = routesDao.getCoords()
+
     fun addRoute(route: Route) {
         launch { addRouteInBG(route) }
     }
@@ -46,8 +48,8 @@ class RoutesRepository(context: Context) : CoroutineScope {
         }
     }
 
-    fun getCoordsOfRoute(routeId: Int) {
-        routesDao.getCoordsOfRoute(routeId)
+    fun getCoordsOfRoute(routeId: Long): List<Coord> {
+        return routesDao.getCoordsOfRoute(routeId)
     }
 
     fun insertCoords(vararg coords: Coord) {
@@ -60,11 +62,11 @@ class RoutesRepository(context: Context) : CoroutineScope {
         }
     }
 
-    fun deleteCoords(routeId: Int) {
+    fun deleteCoords(routeId: Long) {
         launch { deleteCoordsInBG(routeId) }
     }
 
-    private suspend fun deleteCoordsInBG(routeId: Int) {
+    private suspend fun deleteCoordsInBG(routeId: Long) {
         withContext(Dispatchers.IO) {
             routesDao.deletePointsFromRoute(routeId)
         }
