@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -35,7 +36,7 @@ import kotlinx.android.synthetic.main.activity_main.track_button
 import java.util.Calendar
 import java.util.Date
 
-class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteClickListener {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback, RouteClickListener {
 
     private lateinit var fuseLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
@@ -50,7 +51,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
     private lateinit var startTime: Date
     private lateinit var endTime: Date
 
-    private lateinit var presenter: MainPresenter
+    private lateinit var routesViewModel: RoutesViewModel
 
     private val FINE_LOCATION_PERMISSION_CODE = 2345
 
@@ -78,9 +79,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
 
         initRecyclerView()
 
-        presenter = MainPresenterImpl(this)
 
-        (presenter as MainPresenterImpl).routes.observe(this, Observer { routes ->
+        routesViewModel = ViewModelProvider(this).get(RoutesViewModel::class.java)
+
+        routesViewModel.routes.observe(this, Observer { routes ->
             updateRoutesList(routes)
         })
     }
@@ -189,7 +191,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
             .setMessage("Assign a name to this route:")
             .setView(editText)
             .setPositiveButton("Save") { _, _ ->
-                presenter.saveRoute(
+                routesViewModel.saveRoute(
                     editText.text.toString(),
                     locations,
                     startTime,
@@ -207,7 +209,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
             locations = locations + it
             Snackbar.make(
                 findViewById(id.layout),
-//                "${it.lastLocation.latitude} ${it.lastLocation.longitude}",
                 "We have ${result.locations.size} locations",
                 Snackbar.LENGTH_SHORT
             ).show()
@@ -268,7 +269,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
         askForLocationPermissions()
     }
 
-    override fun showRoute(route: Route) {
+    private fun showRoute(route: Route) {
         startActivityForResult(
             Intent(
                 this,
@@ -277,10 +278,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
                 val extras = Bundle()
                 extras.putParcelable(
                     "route",
-                    /*(presenter as MainPresenterImpl).getCompleteRoute(route.id)*/
                     RouteWithCoords(
                         route,
-                        (presenter as MainPresenterImpl).routesRepository.getCoordsOfRoute(route.id)
+                        routesViewModel.getCoordsOfRoute(route.id)
                     )
                 )
                 putExtras(extras)
@@ -289,7 +289,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
         )
     }
 
-    override fun updateRoutesList(routes: List<Route>) {
+    private fun updateRoutesList(routes: List<Route>) {
         (routesList.adapter as RoutesAdapter).updateRoutes(routes)
     }
 
@@ -302,7 +302,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
         if (requestCode == 2) {
             if (resultCode == 2345) {
                 val routeId: Long = data?.getLongExtra("routeId", 0) ?: 0
-                (presenter as MainPresenterImpl).routesRepository.deleteRouteById(routeId)
+                routesViewModel.deleteRouteById(routeId)
             }
         }
     }
@@ -311,9 +311,4 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
         stopTrackingLocation()
         super.onDestroy()
     }
-}
-
-interface MainView {
-    fun showRoute(route: Route)
-    fun updateRoutesList(routes: List<Route>)
 }
