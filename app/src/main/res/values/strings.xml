@@ -1,4 +1,8 @@
 <resources>
   <string name="app_name">GrainChain</string>
   <string name="title_activity_route">Map</string>
+  <string name="start_tracking">Start tracking</string>
+  <string name="stop_tracking">Stop tracking</string>
+  <string name="delete_route">Delete route</string>
+  <string name="share_route">Share Route</string>
 </resources>

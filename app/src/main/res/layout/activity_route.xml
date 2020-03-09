@@ -10,7 +10,7 @@
       android:id="@+id/delete_button"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:text="Delete route"
+      android:text="@string/delete_route"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toStartOf="@id/share_button"
       app:layout_constraintStart_toStartOf="parent"
@@ -20,7 +20,7 @@
       android:id="@+id/share_button"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:text="Share Route"
+      android:text="@string/share_route"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toEndOf="@id/delete_button"
@@ -39,11 +39,11 @@
   <TextView
       android:id="@+id/info_text"
       android:layout_width="wrap_content"
-      android:background="#50ffffff"
-      tools:text = "Hola, soy un texto \n Espero podamos hacer algo acá chido"
       android:layout_height="wrap_content"
+      android:background="#50ffffff"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
+      tools:text="Hola, soy un texto \n Espero podamos hacer algo acá chido"
       />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

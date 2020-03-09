@@ -163,7 +163,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, RouteClickListener
                 Looper.getMainLooper()
             )
 
-            track_button.text = "Stop tracking"
+            track_button.text = getString(R.string.stop_tracking)
         } else {
             Snackbar.make(
                 findViewById(R.id.layout),
@@ -180,7 +180,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, RouteClickListener
         fuseLocationClient.removeLocationUpdates(locationCallback)
         routeLine?.remove()
 
-        track_button.text = "Start Tracking"
+        track_button.text = getString(R.string.start_tracking)
     }
 
     /**

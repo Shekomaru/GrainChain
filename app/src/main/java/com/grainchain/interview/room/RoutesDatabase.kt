@@ -11,7 +11,7 @@ import com.grainchain.interview.data.Route
 @Database(entities = [Route::class, Coord::class], version = 1, exportSchema = false)
 @TypeConverters(RoutesConverters::class)
 abstract class RoutesDatabase : RoomDatabase() {
-    abstract fun RoutesDao(): RoutesDao
+    abstract fun routesDao(): RoutesDao
 
     companion object {
         @Volatile

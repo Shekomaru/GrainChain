@@ -19,7 +19,7 @@ class RoutesRepository(context: Context) : CoroutineScope {
 
     init {
         val db = RoutesDatabase.getDatabase(context)
-        routesDao = db.RoutesDao()
+        routesDao = db.routesDao()
     }
 
     fun getAllRoutes(): LiveData<List<Route>> = routesDao.getAllRoutes()

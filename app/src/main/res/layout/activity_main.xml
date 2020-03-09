@@ -31,7 +31,7 @@
       android:id="@+id/track_button"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="Start tracking"
+      android:text="@string/start_tracking"
       app:layout_constraintBottom_toBottomOf="@id/map"
       app:layout_constraintEnd_toEndOf="@id/map"
       />

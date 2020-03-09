@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.grainchain.interview.R
 import com.grainchain.interview.data.Route
 
-class RoutesAdapter(var routes: List<Route> = emptyList(), private val listener: RouteClickListener) :
+class RoutesAdapter(private var routes: List<Route> = emptyList(), private val listener: RouteClickListener) :
     Adapter<RoutesViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RoutesViewHolder {
