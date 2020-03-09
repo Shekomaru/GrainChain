@@ -22,7 +22,6 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.snackbar.Snackbar
@@ -110,7 +109,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
         ) {
             mMap.isMyLocationEnabled = true
 
-//            startTrackingLocation()
+            locationCallback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult?) {
+                    onLocationReceived(locationResult)
+                }
+            }
         } else {
             ActivityCompat.requestPermissions(
                 this,
@@ -131,9 +134,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
                 grantResults[0] == PackageManager.PERMISSION_GRANTED
             ) {
                 mMap.isMyLocationEnabled = true
-//                startTrackingLocation()
-            } else {
-                //Location permission was denied
+
+                locationCallback = object : LocationCallback() {
+                    override fun onLocationResult(locationResult: LocationResult?) {
+                        onLocationReceived(locationResult)
+                    }
+                }
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -151,12 +157,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
             locationRequest.fastestInterval = 1000
             locationRequest.smallestDisplacement = 0f //Todo: make this 5 before going to prod
             locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-
-            locationCallback = object : LocationCallback() {
-                override fun onLocationResult(locationResult: LocationResult?) {
-                    onLocationReceived(locationResult)
-                }
-            }
 
             fuseLocationClient.requestLocationUpdates(
                 locationRequest,

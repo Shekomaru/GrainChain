@@ -1,7 +1,5 @@
 package com.grainchain.interview.route
 
-import android.R
-import android.app.Activity
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
@@ -17,6 +15,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
+import com.grainchain.interview.R
 import com.grainchain.interview.R.id
 import com.grainchain.interview.R.layout
 import com.grainchain.interview.data.Coord
@@ -26,9 +25,7 @@ import kotlinx.android.synthetic.main.activity_route.delete_button
 import kotlinx.android.synthetic.main.activity_route.info_text
 import kotlinx.android.synthetic.main.activity_route.share_button
 
-class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
-
-    private lateinit var presenter: RoutePresenter
+class RouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var route: Route
@@ -36,8 +33,6 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        presenter = RoutePresenterImpl(this)
 
         setContentView(layout.activity_route)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -58,6 +53,8 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
 
         showRouteInfo()
 
+        actionBar?.setDisplayHomeAsUpEnabled(true)
+
         delete_button.setOnClickListener {
             val routeId = route.id
             val intent = Intent()
@@ -65,6 +62,7 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
             setResult(2345, intent)
             finish()
         }
+
         share_button.setOnClickListener { shareRoute() }
     }
 
@@ -130,10 +128,6 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
             finish()
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onRouteDeleted() {
-        finish()
     }
 
     private fun drawRouteLine(points: List<Coord>) {
@@ -208,8 +202,4 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback, RouteView {
 
         return totalDistance
     }
-}
-
-interface RouteView {
-    fun onRouteDeleted()
 }

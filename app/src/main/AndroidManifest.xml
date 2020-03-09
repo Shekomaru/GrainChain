@@ -31,7 +31,11 @@
 
     <activity
         android:name=".route.RouteActivity"
-        android:label="@string/title_activity_route" />
+        android:label="@string/title_activity_route">
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".main.MainActivity" />
+    </activity>
     <activity android:name=".main.MainActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
