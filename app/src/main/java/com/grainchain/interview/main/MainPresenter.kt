@@ -8,7 +8,7 @@ import com.grainchain.interview.data.Route
 import com.grainchain.interview.room.RoutesRepository
 import java.util.Date
 
-class MainPresenterImpl(private val view: MainView, context: Context) :
+class MainPresenterImpl(context: Context) :
     MainPresenter {
     val routesRepository = RoutesRepository(context)
     val routes: LiveData<List<Route>> = routesRepository.getAllRoutes()

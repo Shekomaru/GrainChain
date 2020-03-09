@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
 
         initRecyclerView()
 
-        presenter = MainPresenterImpl(this, this)
+        presenter = MainPresenterImpl(this)
 
         (presenter as MainPresenterImpl).routes.observe(this, Observer { routes ->
             updateRoutesList(routes)
