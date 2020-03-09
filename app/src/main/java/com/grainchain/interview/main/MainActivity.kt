@@ -85,15 +85,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainView, RouteCli
         })
     }
 
-/*
-    override fun onResume() {
-        super.onResume()
-        (presenter as MainPresenterImpl).routes.observe(this, Observer { routes ->
-            updateRoutesList(routes)
-        })
-    }
-*/
-
     private fun initRecyclerView() {
         routesList = findViewById<RecyclerView>(R.id.routes_list).apply {
             layoutManager = LinearLayoutManager(this@MainActivity)

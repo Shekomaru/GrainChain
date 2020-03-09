@@ -11,25 +11,7 @@ class RoutesConverters {
 
     @TypeConverter
     fun dateToTimestamp(date: Date?): Long? {
-        return date?.time?.toLong()
+        return date?.time
     }
 
-    @TypeConverter
-    fun fromPointToString(point: Pair<Double, Double>?): String? {
-        return if (point != null) "${point.first}\$${point.second}" else null
-    }
-
-    @TypeConverter
-    fun fromStringToPoint(string: String?): Pair<Double, Double>? {
-        if (string == null) {
-            return null
-        }
-
-        val stringParts = string.split("\$")
-        if (stringParts.size != 2) {
-            return null
-        }
-
-        return Pair(stringParts[0].toDouble(), stringParts[1].toDouble())
-    }
 }
