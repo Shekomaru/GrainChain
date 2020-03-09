@@ -24,10 +24,6 @@ class RoutesRepository(context: Context) : CoroutineScope {
 
     fun getAllRoutes(): LiveData<List<Route>> = routesDao.getAllRoutes()
 
-    fun getRoute(routeId: Int) = routesDao.getRoute(routeId)
-
-    fun getCoords() = routesDao.getCoords()
-
     fun addRoute(route: Route) {
         launch { addRouteInBG(route) }
     }
@@ -48,37 +44,8 @@ class RoutesRepository(context: Context) : CoroutineScope {
         }
     }
 
-    fun deleteRoute(route: Route) {
-        launch { deleteRouteInBG(route) }
-    }
-
-    private suspend fun deleteRouteInBG(route: Route) {
-        withContext(Dispatchers.IO) {
-            routesDao.deleteCompleteRoute(route)
-        }
-    }
-
     fun getCoordsOfRoute(routeId: Long): List<Coord> {
         return routesDao.getCoordsOfRoute(routeId)
     }
 
-    fun insertCoords(vararg coords: Coord) {
-        launch { insertCoordsInBG(*coords) }
-    }
-
-    private suspend fun insertCoordsInBG(vararg coords: Coord) {
-        withContext(Dispatchers.IO) {
-            routesDao.insertCoords(*coords)
-        }
-    }
-
-    fun deleteCoords(routeId: Long) {
-        launch { deleteCoordsInBG(routeId) }
-    }
-
-    private suspend fun deleteCoordsInBG(routeId: Long) {
-        withContext(Dispatchers.IO) {
-            routesDao.deletePointsFromRoute(routeId)
-        }
-    }
 }

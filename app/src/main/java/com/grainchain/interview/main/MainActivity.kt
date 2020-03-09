@@ -87,6 +87,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, RouteClickListener
         })
     }
 
+    /**
+     * Function to set a layoutManager and an adapter to the recyclerView that will show the routes
+     */
     private fun initRecyclerView() {
         routesList = findViewById<RecyclerView>(R.id.routes_list).apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
@@ -138,6 +141,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, RouteClickListener
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
+    /**
+     * Function that has to be called to start tracking the location
+     */
     private fun startTrackingLocation() {
         locations = listOf()
         if (ContextCompat.checkSelfPermission(
@@ -148,7 +154,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, RouteClickListener
             locationRequest = LocationRequest.create()
             locationRequest.interval = 2000
             locationRequest.fastestInterval = 1000
-            locationRequest.smallestDisplacement = 0f //Todo: make this 5 before going to prod
+            locationRequest.smallestDisplacement = 5f
             locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
             fuseLocationClient.requestLocationUpdates(
@@ -167,6 +173,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, RouteClickListener
         }
     }
 
+    /**
+     * Function that has to be called to stop tracking the location
+     */
     private fun stopTrackingLocation() {
         fuseLocationClient.removeLocationUpdates(locationCallback)
         routeLine?.remove()
@@ -174,6 +183,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, RouteClickListener
         track_button.text = "Start Tracking"
     }
 
+    /**
+     * Function that asks the user for a name of this new route
+     *
+     * This new route is saved on the database
+     *
+     * If no route available, we only show a Snackbar
+     */
     private fun assignNameAndSave() {
         if (locations.size < 2) {
             Snackbar.make(
@@ -199,19 +215,25 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, RouteClickListener
                 )
             }
             .setNegativeButton("Delete rute") { _, _ ->
-                //todo: just close, and bye bye
+                // Just close, and bye bye
             }
             .show()
     }
 
+    /**
+     * Function that handles when a new location is received
+     *
+     * We update the list, and move the camera to the new point
+     */
     fun onLocationReceived(result: LocationResult?) {
         result?.let {
             locations = locations + it
-            Snackbar.make(
+
+            /*Snackbar.make(
                 findViewById(id.layout),
                 "We have ${result.locations.size} locations",
                 Snackbar.LENGTH_SHORT
-            ).show()
+            ).show()*/
 
             if (locations.size == 1) {
                 mMap.animateCamera(
@@ -239,6 +261,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, RouteClickListener
         drawRouteLine()
     }
 
+    /**
+     * Function that draws an updated line once the points are updated
+     *
+     * This usually happens when a new point is registered on the app
+     */
     private fun drawRouteLine() {
         val polylineOptions = PolylineOptions()
 
@@ -255,20 +282,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, RouteClickListener
         routeLine = mMap.addPolyline(polylineOptions)
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
         askForLocationPermissions()
     }
 
+    /**
+     * Function that opens a second activity showing the route
+     */
     private fun showRoute(route: Route) {
         startActivityForResult(
             Intent(
@@ -289,12 +311,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, RouteClickListener
         )
     }
 
+    /**
+     * Function to handle any modifications happening on the list
+     */
     private fun updateRoutesList(routes: List<Route>) {
         (routesList.adapter as RoutesAdapter).updateRoutes(routes)
-    }
-
-    override fun onRouteClicked(route: Route) {
-        showRoute(route)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -308,7 +329,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, RouteClickListener
     }
 
     override fun onDestroy() {
+        // In case of Activity destroyed: Stop tracking to avoid memory leaks
         stopTrackingLocation()
         super.onDestroy()
     }
+
+    /**
+     * Function to do an action based on the element of the list the user just clicked
+     */
+    override fun onRouteClicked(route: Route) {
+        showRoute(route)
+    }
+
 }

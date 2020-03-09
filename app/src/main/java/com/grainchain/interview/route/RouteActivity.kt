@@ -66,7 +66,14 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback {
         share_button.setOnClickListener { shareRoute() }
     }
 
+    /**
+     * Function to share the name, origin, destination, start time, and end time of the route
+     *
+     * This information will be shared as simple text, so it can be shared to almost any application
+     */
     private fun shareRoute() {
+        // This variable holds the text that will be shared to other applications
+        // It has the route name, clickable links for origin and destination, and start and end times
         val textToShare = "Route name: ${route.name}\n" +
             "Route origin location: https://www.google.com/maps/search/?api=1&query=${route.points.first().latitude},${coords.first().longitude}\n" +
             "Route destination location: https://www.google.com/maps/search/?api=1&query=${coords.last().latitude},${coords.last().longitude}\n" +
@@ -91,6 +98,9 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback {
         startActivity(shareIntent)
     }
 
+    /**
+     * Function to show the distance travelled, and the start and end times of the travel
+     */
     private fun showRouteInfo() {
         title = route.name
 
@@ -119,7 +129,7 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        drawRouteLine(coords)
+        drawRouteLine()
         showCriticalMarkers(coords.first(), coords.last())
     }
 
@@ -130,14 +140,21 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun drawRouteLine(points: List<Coord>) {
+    /**
+     * Function to draw the polyline based on all of the points
+     */
+    private fun drawRouteLine() {
         val polylineOptions = PolylineOptions()
 
-        polylineOptions.addAll(points.map { LatLng(it.latitude, it.longitude) })
+        polylineOptions.addAll(coords.map { LatLng(it.latitude, it.longitude) })
             .width(25f)
         mMap.addPolyline(polylineOptions)
     }
 
+    /**
+     * Function to show start and end markers
+     * It also moves the camera to try to center both markers
+     */
     private fun showCriticalMarkers(start: Coord, end: Coord) {
         // Add a marker in the starting point
         val startingPoint = LatLng(start.latitude, start.longitude)
@@ -178,7 +195,7 @@ class RouteActivity : AppCompatActivity(), OnMapReadyCallback {
      *
      * This distance is given in meters
      *
-     * @return the total distance traveled
+     * @return the total distance traveled in meters
      */
     private fun getDistanceFromPoints(): Float {
         val points = coords
