@@ -29,6 +29,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.grainchain.interview.R
 import com.grainchain.interview.R.id
 import com.grainchain.interview.R.layout
+import com.grainchain.interview.R.string
 import com.grainchain.interview.data.Route
 import com.grainchain.interview.data.RouteWithCoords
 import com.grainchain.interview.route.RouteActivity
@@ -154,7 +155,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, RouteClickListener
             locationRequest = LocationRequest.create()
             locationRequest.interval = 2000
             locationRequest.fastestInterval = 1000
-            locationRequest.smallestDisplacement = 5f
+            locationRequest.smallestDisplacement = 0f
             locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
             fuseLocationClient.requestLocationUpdates(
@@ -167,7 +168,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, RouteClickListener
         } else {
             Snackbar.make(
                 findViewById(R.id.layout),
-                "We don't have the permissions to do that",
+                getString(string.not_enough_permissions),
                 Snackbar.LENGTH_SHORT
             ).show()
         }
@@ -194,7 +195,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, RouteClickListener
         if (locations.size < 2) {
             Snackbar.make(
                 findViewById(id.layout),
-                "We need at least 2 points in order to save the route",
+                getString(string.cannot_save_route),
                 Snackbar.LENGTH_SHORT
             ).show()
 
@@ -203,10 +204,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, RouteClickListener
         val editText = EditText(this)
 
         AlertDialog.Builder(this)
-            .setTitle("Save Route")
-            .setMessage("Assign a name to this route:")
+            .setTitle(getString(string.save_route))
+            .setMessage(getString(string.assign_name_to_route))
             .setView(editText)
-            .setPositiveButton("Save") { _, _ ->
+            .setPositiveButton(getString(string.save)) { _, _ ->
                 routesViewModel.saveRoute(
                     editText.text.toString(),
                     locations,
@@ -214,7 +215,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, RouteClickListener
                     endTime
                 )
             }
-            .setNegativeButton("Delete rute") { _, _ ->
+            .setNegativeButton(getString(R.string.delete_route)) { _, _ ->
                 // Just close, and bye bye
             }
             .show()

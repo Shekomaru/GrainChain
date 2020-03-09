@@ -5,4 +5,9 @@
   <string name="stop_tracking">Stop tracking</string>
   <string name="delete_route">Delete route</string>
   <string name="share_route">Share Route</string>
+  <string name="cannot_save_route">This route is too short to be saved. Try to move a little more</string>
+  <string name="save_route">Save Route</string>
+  <string name="assign_name_to_route">Assign a name to this route:</string>
+  <string name="not_enough_permissions">We don\'t have the permissions to do that</string>
+  <string name="save">Save</string>
 </resources>
